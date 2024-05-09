@@ -14,6 +14,10 @@ url_ds_umfrage <- "https://data.bs.ch/api/explore/v2.1/catalog/datasets/100083/r
 ds_grosserrat <- fromJSON(url_ds_grosserrat)
 ds_umfrage <- fromJSON(url_ds_umfrage)
 
+# reduce data to dataframe 'results' in each dataset
+ds_grosserrat <- ds_grosserrat$results
+ds_umfrage <- ds_umfrage$results
+
 # save data to csv
 write.csv(ds_grosserrat, "data/ds_grosserrat.csv")
 write.csv(ds_umfrage, "data/ds_umfrage.csv")
