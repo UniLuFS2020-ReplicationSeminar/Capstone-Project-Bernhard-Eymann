@@ -10,7 +10,6 @@ library(jsonlite)
 # initialize datasets
 
 ds_grosserrat <- data.frame()
-ds_umfrage <- data.frame()
 
 # load query urls for the relevant data
 # note that i preselected columns via formulation of url query:
@@ -20,7 +19,6 @@ ds_umfrage <- data.frame()
 # using the offset parameter in the query
 
 url_ds_grosserrat <- "https://data.bs.ch/api/explore/v2.1/catalog/datasets/100311/records?select=titel_ges&limit=100&offset="
-url_ds_umfrage <- "https://data.bs.ch/api/explore/v2.1/catalog/datasets/100083/records?select=bast7_2&limit=100&offset="
 
 # writing the query loop for grosserrat data
 # i is set initially to max 196, as the dataset has ca. 19500 entries
@@ -42,17 +40,3 @@ for (i in 1:99) {
 
 # save data to csv
 write.csv(ds_grosserrat, "data/ds_grosserrat.csv")
-
-# downloading the complete dataset
-url_ds_grosserrat_complete <- "https://data.bs.ch/api/explore/v2.1/catalog/datasets/100311/exports/csv?lang=de&timezone=Europe%2FZurich&use_labels=true&delimiter=%3B"
-download.file(url_ds_grosserrat_complete, "data/ds_grosserrat_complete.csv")
-
-# extracting only column titel_ges from the downloaded dataset
-ds_grosserrat_complete <- read.csv("data/ds_grosserrat_complete.csv")
-ds_grosserrat_complete <- ds_grosserrat_complete$titel_ges
-
-# saving the extracted column to a new csv
-write.csv(ds_grosserrat_complete, "data/ds_grosserrat_complete.csv")
-
-
-

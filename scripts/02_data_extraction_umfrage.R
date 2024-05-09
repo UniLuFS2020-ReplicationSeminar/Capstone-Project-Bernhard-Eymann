@@ -22,7 +22,7 @@ url_ds_umfrage <- "https://data.bs.ch/api/explore/v2.1/catalog/datasets/100083/r
 # writing the query loop for umfrage data
 # i is set initially to max 10, as the dataset has 1000 entries
 
-for (i in 1:100) {
+for (i in 1:10) {
   # Code to be executed in each iteration
   query <- paste0(url_ds_umfrage, i*100)
   # extract data from API
@@ -35,21 +35,3 @@ for (i in 1:100) {
 
 # save data to csv
 write.csv(ds_umfrage, "data/ds_umfrage.csv")
-
-# downloading the complete dataset
-# url_ds_grosserrat_complete <- "https://data.bs.ch/api/explore/v2.1/catalog/datasets/100311/exports/csv?lang=de&timezone=Europe%2FZurich&use_labels=true&delimiter=%3B"
-# download.file(url_ds_grosserrat_complete, "data/ds_grosserrat_complete.csv")
-
-
-
-# extract data from API
-# ds_grosserrat <- fromJSON(url_ds_grosserrat)
-# ds_umfrage <- fromJSON(url_ds_umfrage)
-
-# reduce data to dataframe 'results' in each dataset
-# ds_grosserrat <- ds_grosserrat$results
-#ds_umfrage <- ds_umfrage$results
-
-
-# write.csv(ds_umfrage, "data/ds_umfrage.csv")
-
