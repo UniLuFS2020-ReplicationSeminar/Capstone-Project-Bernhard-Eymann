@@ -1,4 +1,5 @@
 # Capstone-Project-Bernhard-Eymann
+# Digitalization in Basel-Stadt: Citizen Expectations and Legislative Projects
 
 ## Project Description
 This project is part of the Data Mining with R course of University of Lucerne in the spring semester 2024. My goals are: 
