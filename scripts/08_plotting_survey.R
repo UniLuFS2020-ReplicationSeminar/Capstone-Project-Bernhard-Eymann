@@ -8,6 +8,8 @@ library(dplyr)
 # load the data
 data <- read.csv("data_processed/umfrage_answer_counts.csv")
 
+str(data)
+
 # plot the data in a pie chart
 ggplot(data, aes(x = "", y = count, fill = answer)) +
   geom_bar(stat = "identity") +
