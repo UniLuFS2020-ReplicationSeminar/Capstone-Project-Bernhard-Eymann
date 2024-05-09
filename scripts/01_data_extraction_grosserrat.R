@@ -18,7 +18,7 @@ ds_grosserrat <- data.frame()
 # as there is a limit of 100 records per query, i will have to loop through the data
 # using the offset parameter in the query
 
-url_ds_grosserrat <- "https://data.bs.ch/api/explore/v2.1/catalog/datasets/100311/records?select=ende_ges%252C%20titel_ges&limit=100&offset="
+url_ds_grosserrat <- "https://data.bs.ch/api/explore/v2.1/catalog/datasets/100311/records?select=ende_ges%2C%20titel_ges&limit=100&offset="
 
 # writing the query loop for grosserrat data
 # i is set initially to max 196, as the dataset has ca. 19500 entries
