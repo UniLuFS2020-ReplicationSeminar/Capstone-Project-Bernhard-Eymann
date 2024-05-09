@@ -4,7 +4,7 @@
 ## Project Description
 This project is part of the Data Mining with R course of University of Lucerne in the spring semester 2024. My goals are: 
 - realize a simple data analysis flow (scrape -> preprocess -> analyze -> report)
-- using R and RStudio und github
+- using R and RStudio and github
 - using the open data API of the canton Basel-Stadt
 
 ## Background
@@ -16,7 +16,7 @@ My two hypotheses are:
 - Legislative projects on digitalization reflects a progress of digitalization in the canton.
 
 ## Data
-I will use the following data sources:
+I will use the following publicly open data sources:
 - Dataset of a 2020 public survey on the digitalization of the canton
   https://data.bs.ch/explore/dataset/100083/table/?disjunctive.altersgruppe&disjunctive.partei&disjunctive.bildung&sort=bast7_3&dataChart=eyJxdWVyaWVzIjpbeyJjaGFydHMiOlt7InR5cGUiOiJjb2x1bW4iLCJmdW5jIjoiQ09VTlQiLCJ5QXhpcyI6Imdld2RlZiIsInNjaWVudGlmaWNEaXNwbGF5Ijp0cnVlLCJjb2xvciI6InJhbmdlLVBhaXJlZCIsInBvc2l0aW9uIjoiY2VudGVyIn1dLCJ4QXhpcyI6ImJhc3QzIiwibWF4cG9pbnRzIjpudWxsLCJzb3J0IjoiIiwic2VyaWVzQnJlYWtkb3duIjoiYmFzdDdfMyIsInNlcmllc0JyZWFrZG93blRpbWVzY2FsZSI6IiIsInN0YWNrZWQiOiJwZXJjZW50IiwiY29uZmlnIjp7ImRhdGFzZXQiOiIxMDAwODMiLCJvcHRpb25zIjp7ImRpc2p1bmN0aXZlLmFsdGVyc2dydXBwZSI6dHJ1ZSwiZGlzanVuY3RpdmUucGFydGVpIjp0cnVlLCJkaXNqdW5jdGl2ZS5iaWxkdW5nIjp0cnVlfX19XSwidGltZXNjYWxlIjoiIiwiZGlzcGxheUxlZ2VuZCI6dHJ1ZSwiYWxpZ25Nb250aCI6dHJ1ZX0%3D
 - Dataset of the complete legislative projects of the parliament in Basel-Stadt in the last 10+ years
