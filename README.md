@@ -7,12 +7,12 @@ This project is part of the Data Mining with R course of University of Lucerne i
 - using the open data API of the canton Basel-Stadt
 
 ## Background
-I am currently a legal clerk working at the canton Basel-Stadt and I am also part of the broad digitalization initiative within the canton Basel-Stadt. I am interested in the expectations of the citizens of Basel-Stadt regarding the digitalization of the public authorities in the canton. I would like to know, whether legislation in the canton is in broad terms en accord with the expectations of the citizens regarding digitization.
+I am currently a legal clerk working at the canton Basel-Stadt and I am also part of the broad digitalization initiative within the canton Basel-Stadt. I am interested in the expectations of the citizens of Basel-Stadt regarding the digitalization of the public authorities in the canton. I would like to know, whether legislation in the canton is in broad terms en accord with the expectations of the citizens regarding digitalization.
 
 ## Hypotheses
 My two hypotheses are:
 - Citizens of the canton expect a progress of digitalization in the canton.
-- Legislative projects on digitalization reflects a progress of digitization in the canton.
+- Legislative projects on digitalization reflects a progress of digitalization in the canton.
 
 ## Data
 I will use the following data sources:
@@ -22,4 +22,4 @@ I will use the following data sources:
 https://data.bs.ch/explore/dataset/100311/api/?disjunctive.signatur_ges&disjunctive.status_ges&disjunctive.departement_ges&disjunctive.ga_rr_gr&disjunctive.anrede_urheber&disjunctive.gremientyp_urheber&disjunctive.name_vorname_urheber&disjunctive.partei_kname_urheber&disjunctive.nr_urheber&disjunctive.anrede_miturheber&disjunctive.gremientyp_miturheber&disjunctive.name_vorname_miturheber&disjunctive.partei_kname_miturheber&disjunctive.nr_miturheber
 
 ## Methods
-I will not use any advanced statistical methods, as I have no relevant knowledge in statistics due to my legal background and only recent start in LUMACSS. However I will try to use the available big data to paint an informative picture on the topic, using relevant data extraction and visualization methods.
+I will not use any advanced statistical methods, as I have no relevant knowledge in statistics due to my legal background and only recent start in LUMACSS. However, I will  use the available big data to paint an informative picture on the topic, using relevant data extraction and visualization methods.
