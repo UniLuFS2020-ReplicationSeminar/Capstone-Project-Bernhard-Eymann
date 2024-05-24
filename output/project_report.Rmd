@@ -1,0 +1,367 @@
+---
+title: "Project Report"
+output: html_document
+date: "2024-05-24"
+---
+
+# Digitalization in Basel-Stadt: Citizen Expectations and Legislative Projects
+
+## Introduction
+
+### Project Description
+This project is part of the Data Mining with R course of University of Lucerne in the spring semester 2024. My goals are: 
+- realize a simple data analysis flow (scrape -> preprocess -> analyze -> report)
+- using R and RStudio and github
+- using the open data API of the canton Basel-Stadt
+
+### Background
+I am currently a legal clerk working at the canton Basel-Stadt and I am also part of the broad digitalization initiative within the canton Basel-Stadt. I am interested in the expectations of the citizens of Basel-Stadt regarding the digitalization of the public authorities in the canton. I would like to know, whether legislation in the canton is in broad terms en accord with the expectations of the citizens regarding digitalization.
+
+### Hypotheses
+My two hypotheses are:
+- Citizens of the canton favor a progress of digitalization in the canton.
+- Legislative projects on digitalization reflect a progress of digitalization in the canton.
+
+### Data
+I will use the following publicly open data sources:
+- Dataset of a 2020 public survey on the digitalization of the canton
+  https://data.bs.ch/explore/dataset/100083/table/?disjunctive.altersgruppe&disjunctive.partei&disjunctive.bildung&sort=bast7_3&dataChart=eyJxdWVyaWVzIjpbeyJjaGFydHMiOlt7InR5cGUiOiJjb2x1bW4iLCJmdW5jIjoiQ09VTlQiLCJ5QXhpcyI6Imdld2RlZiIsInNjaWVudGlmaWNEaXNwbGF5Ijp0cnVlLCJjb2xvciI6InJhbmdlLVBhaXJlZCIsInBvc2l0aW9uIjoiY2VudGVyIn1dLCJ4QXhpcyI6ImJhc3QzIiwibWF4cG9pbnRzIjpudWxsLCJzb3J0IjoiIiwic2VyaWVzQnJlYWtkb3duIjoiYmFzdDdfMyIsInNlcmllc0JyZWFrZG93blRpbWVzY2FsZSI6IiIsInN0YWNrZWQiOiJwZXJjZW50IiwiY29uZmlnIjp7ImRhdGFzZXQiOiIxMDAwODMiLCJvcHRpb25zIjp7ImRpc2p1bmN0aXZlLmFsdGVyc2dydXBwZSI6dHJ1ZSwiZGlzanVuY3RpdmUucGFydGVpIjp0cnVlLCJkaXNqdW5jdGl2ZS5iaWxkdW5nIjp0cnVlfX19XSwidGltZXNjYWxlIjoiIiwiZGlzcGxheUxlZ2VuZCI6dHJ1ZSwiYWxpZ25Nb250aCI6dHJ1ZX0%3D
+- Dataset of the complete legislative projects of the parliament in Basel-Stadt in the last 10+ years
+https://data.bs.ch/explore/dataset/100311/api/?disjunctive.signatur_ges&disjunctive.status_ges&disjunctive.departement_ges&disjunctive.ga_rr_gr&disjunctive.anrede_urheber&disjunctive.gremientyp_urheber&disjunctive.name_vorname_urheber&disjunctive.partei_kname_urheber&disjunctive.nr_urheber&disjunctive.anrede_miturheber&disjunctive.gremientyp_miturheber&disjunctive.name_vorname_miturheber&disjunctive.partei_kname_miturheber&disjunctive.nr_miturheber
+
+### Methods
+I will not use any advanced statistical methods, as I have no relevant knowledge in statistics due to my legal background and only recent start in LUMACSS. However, I will  use the available big data to paint an informative picture on the topic, using relevant data extraction and visualization methods.
+
+### Transparency on use of AI Assistants
+In R Studio, I used github Copilot to help me writing the code from scratch, as I am a total R beginner.
+I also used ChatGPT (running on model GPT-4 and later GPT-4o) for code debugging and efficiently overhauling the plotting scripts in order to refine the plots.
+
+## Data Extraction, Preprocessing and Analysis in R
+
+### Script 01: Data Extraction on Legislative Projects
+```{r setup, include=FALSE}
+# clear workspace
+
+rm(list=ls())
+
+# load libraries for API data extraction
+
+library(tidyverse)
+library(jsonlite)
+
+# initialize datasets
+
+ds_grosserrat <- data.frame()
+
+# load query urls for the relevant data
+# note that i preselected columns via formulation of url query:
+# ende_ges gets the date of the end of the legislation proposal in the cantonal parliament
+# titel_ges gets the title of every legislation proposal in the cantonal parliament
+# as there is a limit of 100 records per query, i will have to loop through the data
+# using the offset parameter in the query
+
+url_ds_grosserrat <- "https://data.bs.ch/api/explore/v2.1/catalog/datasets/100311/records?select=ende_ges%2C%20titel_ges&limit=100&offset="
+
+# writing the query loop for grosserrat data
+# i is set initially to max 196, as the dataset has ca. 19500 entries
+# strangely, this gives me an error at offset=10000 (400 bad request)
+# when i try this manually, the error persists, i don't find a workaround looking in the documentation
+# for the purpose of this exercise, i will limit the query to offset 9900
+# and will download the complete dataset via a separate script, as it is available as a csv also
+
+for (i in 1:99) {
+  # Code to be executed in each iteration
+  query <- paste0(url_ds_grosserrat, i*100)
+  # extract data from API
+  data <- fromJSON(query)
+  # reduce data to dataframe 'results' in each dataset
+  data <- data$results
+  # append data to existing data
+  ds_grosserrat <- rbind(ds_grosserrat, data)
+}
+
+# save data to csv
+write.csv(ds_grosserrat, "data/ds_grosserrat.csv")
+```
+
+### Script 02: Data Extraction on Citizen Expectations
+```{r setup, include=FALSE}
+# clear workspace
+
+rm(list=ls())
+
+# load libraries for API data extraction
+
+library(tidyverse)
+library(jsonlite)
+
+# initialize dataset
+
+ds_umfrage <- data.frame()
+
+# load query urls for the relevant data
+# note that i preselected columns via formulation of url query:
+# bast7_2 gets results to the question whether Basel-Stadt should have a pioneering role in digitalization
+# as there is a limit of 100 records per query, i will have to loop through the data
+# using the offset parameter in the query
+
+url_ds_umfrage <- "https://data.bs.ch/api/explore/v2.1/catalog/datasets/100083/records?select=bast7_2&limit=100&offset="
+
+# writing the query loop for umfrage (=survey) data
+# i is set initially to max 10, as the dataset has 1000 entries
+
+for (i in 1:10) {
+  # Code to be executed in each iteration
+  query <- paste0(url_ds_umfrage, i*100)
+  # extract data from API
+  data <- fromJSON(query)
+  # reduce data to dataframe 'results' in each dataset
+  data <- data$results
+  # append data to existing data
+  ds_umfrage <- rbind(ds_umfrage, data)
+}
+
+# save data to csv
+write.csv(ds_umfrage, "data/ds_umfrage.csv")
+```
+
+### Script 03: Completing Data Extraction on Legislative Projects
+
+```{r setup, include=FALSE}
+# clear workspace
+
+rm(list=ls())
+
+# load libraries for API data extraction
+
+library(tidyverse)
+library(jsonlite)
+
+# downloading the complete dataset
+url_ds_grosserrat_complete <- "https://data.bs.ch/api/explore/v2.1/catalog/datasets/100311/exports/csv?lang=de&timezone=Europe%2FZurich&use_labels=true&delimiter=%3B"
+download.file(url_ds_grosserrat_complete, "data/ds_grosserrat_complete_all.csv")
+
+# extracting columns "Beginn Geschäft" (start of project) Ende Geschäft" (end of project) "Titel Geschäft" (title of project) from the downloaded dataset
+ds_grosserrat_complete <- read.csv("data/ds_grosserrat_complete_all.csv", fileEncoding = "UTF-8", sep=";")
+ds_grosserrat_complete <- ds_grosserrat_complete[, c("Beginn.Geschäft", "Ende.Geschäft", "Titel.Geschäft")]
+
+# saving the extracted columns to a new csv
+write.csv(ds_grosserrat_complete, "data/ds_grosserrat_complete.csv")
+```
+
+### Script 04: Data Preprocessing on Legislative Projects
+
+```{r setup, include=FALSE}
+# clear workspace
+rm(list=ls())
+
+# loading libraries for extracting rows, that contain keywords in column 'titel_ges'
+library(tidyverse)
+library(stringr)
+
+# load data (the complete dataset of grosserrat data)
+ds_grosserrat <- read.csv("data/ds_grosserrat_complete.csv")
+
+# define key fragments of words related to digitalization
+key_fragments <- c("digital", "elektronisch")
+
+# extract rows that contain key fragments in column 'Titel.Geschäft'
+ds_grosserrat_digital <- ds_grosserrat %>%
+  filter(str_detect(Titel.Geschäft, key_fragments[1]) | str_detect(Titel.Geschäft, key_fragments[2]))
+
+# save data to csv
+write.csv(ds_grosserrat_digital, "data_processed/ds_grosserrat_digital.csv")
+```
+
+### Script 05: Data Preprocessing on Citizen Expectations
+
+```{r setup, include=FALSE}
+# clear workspace
+
+rm(list=ls())
+
+# load libraries for counting answers in survey data
+library(tidyverse)
+
+# load data
+data <- read.csv("data/ds_umfrage.csv")
+
+# Defining possible answers (ranging from "sehr einverstanden" - agreeing very much - to "überhaupt nicht einverstanden" - not agreeing at all)
+answers <- c("sehr einverstanden", "eher einverstanden", "weiss nicht", "eher nicht einverstanden", "überhaupt nicht einverstanden")
+
+# Ensure the answers column is a factor with the specified levels
+data$bast7_2 <- factor(data$bast7_2, levels = answers)
+
+# Count answers in a long format
+answer_counts <- data %>%
+  filter(bast7_2 %in% answers) %>%  # Ensure only relevant answers are counted
+  count(bast7_2) %>%
+  rename(answer = bast7_2, count = n)
+
+# Save the counts to a csv file
+write.csv(answer_counts, "data_processed/umfrage_answer_counts.csv", row.names = FALSE)
+```
+
+### Script 06: Continuing Data Preprocessing on Legislative Projects
+
+```{r setup, include=FALSE}
+# clear workspace
+rm(list=ls())
+
+# load libraries for date manipulation and data manipulation
+library(lubridate)
+library(dplyr)
+
+# load the data
+data <- read.csv("data_processed/ds_grosserrat_digital.csv")
+
+# convert the columns "Beginn.Geschäft" and "Ende.Geschäft" to dates
+data$Beginn.Geschäft <- as.Date(data$Beginn.Geschäft, format = "%Y-%m-%d")
+data$Ende.Geschäft <- as.Date(data$Ende.Geschäft, format = "%Y-%m-%d")
+
+# sort the data by the "Ende.Geschäft" date
+data_end_sorted <- data %>% arrange(Ende.Geschäft)
+
+# count how many rows there are each year based on "Ende.Geschäft"
+data_end_sorted %>%
+  mutate(year = year(Ende.Geschäft)) %>%
+  group_by(year) %>%
+  summarise(count = n()) %>%
+  write.csv("data_processed/ds_grosserrat_digital_yearly_end.csv", row.names = FALSE)
+
+# sort the data by the "Beginn.Geschäft" date
+data_begin_sorted <- data %>% arrange(Beginn.Geschäft)
+
+# count how many rows there are each year based on "Beginn.Geschäft"
+data_begin_sorted %>%
+  mutate(year = year(Beginn.Geschäft)) %>%
+  group_by(year) %>%
+  summarise(count = n()) %>%
+  write.csv("data_processed/ds_grosserrat_digital_yearly_begin.csv", row.names = FALSE)
+```
+
+### Script 07: Visualizing Data on Legislative Projects
+
+```{r setup, include=FALSE}
+# clear workspace
+rm(list=ls())
+
+# loading libraries for plotting digital legislation data
+library(ggplot2)
+library(dplyr)
+
+# load the 2 data sets
+data1 <- read.csv("data_processed/ds_grosserrat_digital_yearly_begin.csv")
+data2 <- read.csv("data_processed/ds_grosserrat_digital_yearly_end.csv")
+
+# Add a column to distinguish the datasets
+data1$stage <- "Beginning"
+data2$stage <- "End"
+
+# Combine the datasets
+combined_data <- rbind(data1, data2)
+
+# plot the data in a bar chart
+ggplot(combined_data, aes(x = year, y = count, fill = stage)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  scale_y_continuous(breaks = seq(0, 10, 1), limits = c(0, 10)) +  # Set the y-axis breaks to integers and limit to a maximum of 10
+  labs(title = "Legislation in the Grand Council of Basel-Stadt related to digitalization",
+       x = "Year",
+       y = "Number of legislation projects related to digitalization",
+       fill = "Stage") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# save the plot
+ggsave("plots/ds_grosserrat_digital_yearly.png", width = 10, height = 6, dpi = 300)
+```
+
+### Script 08: Visualizing Data on Citizen Expectations
+
+```{r setup, include=FALSE}
+# clear workspace
+rm(list=ls())
+
+# loading libraries for plotting public survey on cantonal legislation data
+library(ggplot2)
+library(dplyr)
+library(scales)
+library(RColorBrewer)
+
+# load the data
+data <- read.csv("data_processed/umfrage_answer_counts.csv")
+
+str(data)
+
+# Defining possible answers in the desired order
+answers <- c("sehr einverstanden", "eher einverstanden", "weiss nicht", "eher nicht einverstanden", "überhaupt nicht einverstanden")
+english_labels <- c("Strongly Agree", "Agree", "Don't Know", "Disagree", "Strongly Disagree")
+
+# Ensure the answers column is a factor with the specified levels
+data$answer <- factor(data$answer, levels = answers)
+
+# Calculate the percentage of each answer
+data <- data %>%
+  mutate(percentage = count / sum(count) * 100)
+
+# plot the data in a pie chart
+ggplot(data, aes(x = "", y = count, fill = answer)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar("y") +
+  labs(title = '2020 survey in the canton Basel-Stadt:\n"Do you want Basel-Stadt to be a pioneering canton in digitalization?"',
+       x = "",
+       y = "") +
+  scale_fill_manual(values = brewer.pal(length(answers), "Set3"), 
+                    labels = english_labels, 
+                    name = "Answer") +  # Use manual fill scale with English labels
+  theme_void() +  # Use a void theme for a cleaner look
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    legend.position = "right",
+    plot.background = element_rect(fill = "white", color = NA),  # Set the background to white
+    panel.background = element_rect(fill = "white", color = NA)  # Set the panel background to white
+  ) +
+  geom_text(aes(label = paste0(round(percentage, 1), "%")), 
+            position = position_stack(vjust = 0.5), size = 5, color = "black")  # Set percentage text to black
+
+# save the plot
+ggsave("plots/umfrage_answer_counts.png", width = 10, height = 6, dpi = 300)
+```
+
+## Results, Discussion and Conclusion
+
+### Results
+
+#### Legislative Projects
+We see that the number of legislative projects related to digitalization in the Grand Council of Basel-Stadt has been increasing over the years. In the beginning of the period, there were only a few projects, but in the last years, the number has increased significantly. This shows that the Grand Council is increasingly dealing with digitalization topics. While beginning projects spiked in 2020 with 9, the number of ending projects spiked in 2020 and 2022 with 6 projects. Remarkably, the number of ending projects declined steeply after 2020, while also the number of starting projects declined after 2022, but less steeply.
+
+#### Citizen Expectations
+The public survey in the canton Basel-Stadt in 2020 shows that the majority of citizens want Basel-Stadt to be a pioneering canton in digitalization. The survey results show that 29.3% of the citizens strongly agree with this statement, while 32.5% agree. Only 12.7% of the citizens strongly disagree with this statement, while 20% disagree. The remaining 5.5% of the citizens don't know.
+
+### Discussion
+While there is a significant sceptical minority in the canton that doesn't want Basel-Stadt to be a pioneering canton in digitalization, the majority of the citizens are in favor of this. The legislative projects in the Grand Council of Basel-Stadt reflect this in a general trend, as the number of projects related to digitalization has been increasing over the years. This shows that the Grand Council is increasingly dealing with digitalization topics, which on the surface seems in line with the expectations of the citizens. However, the steep decline in the number of projects after 2020 is salient, as it might indicate a shift in priorities away from digitalization, exactly at the time, when the survey produced a contrary public expectation. The reasons for this shift in priorities should be further investigated and cannot be explained with this data exploration. One possible reason could be, that single projects get bigger and more complex, so that the number of projects decreases, while the workload increases. To confirm this, a qualitative exploration of projects would be necessary.
+
+### Conclusion
+The results of this data exploration show that the citizens of Basel-Stadt favor a progress of digitalization in the canton. The legislative projects on digitalization reflect a progress of digitalization in the canton, but the steep decline in the number of projects after 2020 is salient and should be further investigated. The reasons for this decline are not clear and could be a sign of a shift in priorities away from digitalization, which would be contrary to the expectations of the citizens. Further research is needed to confirm this hypothesis.
+
+
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
