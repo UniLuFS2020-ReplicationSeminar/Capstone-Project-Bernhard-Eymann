@@ -8,7 +8,7 @@ library(tidyverse)
 # load data
 data <- read.csv("data/ds_umfrage.csv")
 
-# Defining possible answers
+# Defining possible answers (ranging from "sehr einverstanden" - agreeing very much - to "überhaupt nicht einverstanden" - not agreeing at all)
 answers <- c("sehr einverstanden", "eher einverstanden", "weiss nicht", "eher nicht einverstanden", "überhaupt nicht einverstanden")
 
 # Count answers in a long format
