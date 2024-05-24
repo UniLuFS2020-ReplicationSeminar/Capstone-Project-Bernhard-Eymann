@@ -12,8 +12,8 @@ I am currently a legal clerk working at the canton Basel-Stadt and I am also par
 
 ## Hypotheses
 My two hypotheses are:
-- Citizens of the canton expect a progress of digitalization in the canton.
-- Legislative projects on digitalization reflects a progress of digitalization in the canton.
+- Citizens of the canton favor a progress of digitalization in the canton.
+- Legislative projects on digitalization reflect a progress of digitalization in the canton.
 
 ## Data
 I will use the following publicly open data sources:
