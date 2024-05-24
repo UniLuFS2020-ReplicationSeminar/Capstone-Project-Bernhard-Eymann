@@ -25,7 +25,7 @@ url_ds_grosserrat <- "https://data.bs.ch/api/explore/v2.1/catalog/datasets/10031
 # strangely, this gives me an error at offset=10000 (400 bad request)
 # when i try this manually, the error persists, i don't find a workaround looking in the documentation
 # for the purpose of this exercise, i will limit the query to offset 9900
-# and will download the complete dataset separately, as it is available as a csv also
+# and will download the complete dataset via a separate script, as it is available as a csv also
 
 for (i in 1:99) {
   # Code to be executed in each iteration

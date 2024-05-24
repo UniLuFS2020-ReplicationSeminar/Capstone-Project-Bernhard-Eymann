@@ -13,13 +13,13 @@ ds_umfrage <- data.frame()
 
 # load query urls for the relevant data
 # note that i preselected columns via formulation of url query:
-# bast7_2 gets results to the question wheter Basel-Stadt should have a pioneering role in digitalization
+# bast7_2 gets results to the question whether Basel-Stadt should have a pioneering role in digitalization
 # as there is a limit of 100 records per query, i will have to loop through the data
 # using the offset parameter in the query
 
 url_ds_umfrage <- "https://data.bs.ch/api/explore/v2.1/catalog/datasets/100083/records?select=bast7_2&limit=100&offset="
 
-# writing the query loop for umfrage data
+# writing the query loop for umfrage (=survey) data
 # i is set initially to max 10, as the dataset has 1000 entries
 
 for (i in 1:10) {
