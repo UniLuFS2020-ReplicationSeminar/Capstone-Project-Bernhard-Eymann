@@ -1,10 +1,8 @@
 ---
-title: "Project Report"
+title: "Digitalization in Basel-Stadt: Citizen Expectations and Legislative Projects"
 output: html_document
 date: "2024-05-24"
 ---
-
-# Digitalization in Basel-Stadt: Citizen Expectations and Legislative Projects
 
 ## Introduction
 
@@ -39,7 +37,7 @@ I also used ChatGPT (running on model GPT-4 and later GPT-4o) for code debugging
 ## Data Extraction, Preprocessing and Analysis in R
 
 ### Script 01: Data Extraction on Legislative Projects
-```{r setup, include=FALSE}
+```{r}
 # clear workspace
 
 rm(list=ls())
@@ -85,7 +83,7 @@ write.csv(ds_grosserrat, "data/ds_grosserrat.csv")
 ```
 
 ### Script 02: Data Extraction on Citizen Expectations
-```{r setup, include=FALSE}
+```{r}
 # clear workspace
 
 rm(list=ls())
@@ -127,7 +125,7 @@ write.csv(ds_umfrage, "data/ds_umfrage.csv")
 
 ### Script 03: Completing Data Extraction on Legislative Projects
 
-```{r setup, include=FALSE}
+```{r}
 # clear workspace
 
 rm(list=ls())
@@ -151,7 +149,7 @@ write.csv(ds_grosserrat_complete, "data/ds_grosserrat_complete.csv")
 
 ### Script 04: Data Preprocessing on Legislative Projects
 
-```{r setup, include=FALSE}
+```{r}
 # clear workspace
 rm(list=ls())
 
@@ -175,7 +173,7 @@ write.csv(ds_grosserrat_digital, "data_processed/ds_grosserrat_digital.csv")
 
 ### Script 05: Data Preprocessing on Citizen Expectations
 
-```{r setup, include=FALSE}
+```{r}
 # clear workspace
 
 rm(list=ls())
@@ -204,7 +202,7 @@ write.csv(answer_counts, "data_processed/umfrage_answer_counts.csv", row.names =
 
 ### Script 06: Continuing Data Preprocessing on Legislative Projects
 
-```{r setup, include=FALSE}
+```{r}
 # clear workspace
 rm(list=ls())
 
@@ -242,7 +240,7 @@ data_begin_sorted %>%
 
 ### Script 07: Visualizing Data on Legislative Projects
 
-```{r setup, include=FALSE}
+```{r}
 # clear workspace
 rm(list=ls())
 
@@ -278,7 +276,92 @@ ggsave("plots/ds_grosserrat_digital_yearly.png", width = 10, height = 6, dpi = 3
 
 ### Script 08: Visualizing Data on Citizen Expectations
 
-```{r setup, include=FALSE}
+```{r}
+# clear workspace
+rm(list=ls())
+
+# loading libraries for plotting public survey on cantonal legislation data
+library(ggplot2)
+library(dplyr)
+library(scales)
+library(RColorBrewer)
+
+# load the data
+data <- read.csv("data_processed/umfrage_answer_counts.csv")
+
+str(data)
+
+# Defining possible answers in the desired order
+answers <- c("sehr einverstanden", "eher einverstanden", "weiss nicht", "eher nicht einverstanden", "überhaupt nicht einverstanden")
+english_labels <- c("Strongly Agree", "Agree", "Don't Know", "Disagree", "Strongly Disagree")
+
+# Ensure the answers column is a factor with the specified levels
+data$answer <- factor(data$answer, levels = answers)
+
+# Calculate the percentage of each answer
+data <- data %>%
+  mutate(percentage = count / sum(count) * 100)
+
+# plot the data in a pie chart
+ggplot(data, aes(x = "", y = count, fill = answer)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar("y") +
+  labs(title = '2020 survey in the canton Basel-Stadt:\n"Do you want Basel-Stadt to be a pioneering canton in digitalization?"',
+       x = "",
+       y = "") +
+  scale_fill_manual(values = brewer.pal(length(answers), "Set3"), 
+                    labels = english_labels, 
+                    name = "Answer") +  # Use manual fill scale with English labels
+  theme_void() +  # Use a void theme for a cleaner look
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    legend.position = "right",
+    plot.background = element_rect(fill = "white", color = NA),  # Set the background to white
+    panel.background = element_rect(fill = "white", color = NA)  # Set the panel background to white
+  ) +
+  geom_text(aes(label = paste0(round(percentage, 1), "%")), 
+            position = position_stack(vjust = 0.5), size = 5, color = "black")  # Set percentage text to black
+
+# save the plot
+ggsave("plots/umfrage_answer_counts.png", width = 10, height = 6, dpi = 300)
+```
+
+## Visualizations
+
+```{r echo=FALSE}
+# clear workspace
+rm(list=ls())
+
+# loading libraries for plotting digital legislation data
+library(ggplot2)
+library(dplyr)
+
+# load the 2 data sets
+data1 <- read.csv("data_processed/ds_grosserrat_digital_yearly_begin.csv")
+data2 <- read.csv("data_processed/ds_grosserrat_digital_yearly_end.csv")
+
+# Add a column to distinguish the datasets
+data1$stage <- "Beginning"
+data2$stage <- "End"
+
+# Combine the datasets
+combined_data <- rbind(data1, data2)
+
+# plot the data in a bar chart
+ggplot(combined_data, aes(x = year, y = count, fill = stage)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  scale_y_continuous(breaks = seq(0, 10, 1), limits = c(0, 10)) +  # Set the y-axis breaks to integers and limit to a maximum of 10
+  labs(title = "Legislation in the Grand Council of Basel-Stadt related to digitalization",
+       x = "Year",
+       y = "Number of legislation projects related to digitalization",
+       fill = "Stage") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# save the plot
+ggsave("plots/ds_grosserrat_digital_yearly.png", width = 10, height = 6, dpi = 300)
+```
+```{r echo=FALSE}
 # clear workspace
 rm(list=ls())
 
@@ -343,25 +426,3 @@ While there is a significant sceptical minority in the canton that doesn't want 
 
 ### Conclusion
 The results of this data exploration show that the citizens of Basel-Stadt favor a progress of digitalization in the canton. The legislative projects on digitalization reflect a progress of digitalization in the canton, but the steep decline in the number of projects after 2020 is salient and should be further investigated. The reasons for this decline are not clear and could be a sign of a shift in priorities away from digitalization, which would be contrary to the expectations of the citizens. Further research is needed to confirm this hypothesis.
-
-
-
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
-```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
